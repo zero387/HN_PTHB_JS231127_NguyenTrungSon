@@ -124,19 +124,19 @@
     </div>
 
     <script>
-        var hocsinhDangChinhSua = null;
+        let hocsinhDangChinhSua = null;
         function luuThongTin() {
-            var hoTen = document.getElementById('hoTen').value;
-            var email = document.getElementById('email').value;
-            var soDienThoai = document.getElementById('soDienThoai').value;
-            var queQuan = document.getElementById('queQuan').value;
+            let hoTen = document.getElementById('hoTen').value;
+            let email = document.getElementById('email').value;
+            let soDienThoai = document.getElementById('soDienThoai').value;
+            let queQuan = document.getElementById('queQuan').value;
 
             if (hoTen === '' || email === '' || soDienThoai === '' || queQuan === '') {
                 alert('Vui lòng điền đầy đủ thông tin.');
                 return;
             }
-            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
-            var tonTai = danhSachHocVien.some(function (hocVien) {
+            let danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            let tonTai = danhSachHocVien.some(function (hocVien) {
                 return hocVien.email === email;
             });
             if (tonTai && hocsinhDangChinhSua === null) {
@@ -155,8 +155,8 @@
                 document.querySelector('#danhSachHocVien tbody tr:nth-child(' + (hocsinhDangChinhSua.index + 1) + ') button:nth-child(1)').style.display = 'inline-block';
                 document.querySelector('#danhSachHocVien tbody tr:nth-child(' + (hocsinhDangChinhSua.index + 1) + ') button:nth-child(2)').style.display = 'none';
             } else {
-                var gioiTinh = document.querySelector('input[name="gioiTinh"]:checked') ? document.querySelector('input[name="gioiTinh"]:checked').value : '';
-                var hocVien = {
+                let gioiTinh = document.querySelector('input[name="gioiTinh"]:checked') ? document.querySelector('input[name="gioiTinh"]:checked').value : '';
+                let hocVien = {
                     hoTen: hoTen,
                     email: email,
                     soDienThoai: soDienThoai,
@@ -171,20 +171,20 @@
             console.log(soDienThoai);
         }
         function kiemTraSoDienThoai() {
-            var inputSoDienThoai = document.getElementById('soDienThoai').value;
-            var regex = /^(0|\+84)([2-9]\d{8}|[1-9]\d{7})$/;
+            let inputSoDienThoai = document.getElementById('soDienThoai').value;
+            let regex = /^(0|\+84)([2-9]\d{8}|[1-9]\d{7})$/;
             if (!regex.test(inputSoDienThoai)) {
                 alert('Bạn đã nhập sai số điện thoại');
                 return;
             }
         }
         function hienThiDanhSachHocVien() {
-            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
-            var tbody = document.querySelector('#danhSachHocVien tbody');
+            let danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            let tbody = document.querySelector('#danhSachHocVien tbody');
             tbody.innerHTML = '';
 
             danhSachHocVien.forEach(function (hocVien, index) {
-                var tr = document.createElement('tr');
+                let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${hocVien.hoTen}</td>
@@ -201,32 +201,32 @@
             });
         }
         function xoaHocVien(index) {
-            var xacNhan = confirm("Bạn có muốn xóa học sinh này không?");
+            let xacNhan = confirm("Bạn có muốn xóa học sinh này không?");
             if (xacNhan) {
-                var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+                let danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
                 danhSachHocVien.splice(index, 1);
                 localStorage.setItem('danhSachHocVien', JSON.stringify(danhSachHocVien));
                 hienThiDanhSachHocVien();
             }
         }
         function timKiem() {
-            var tuKhoa = document.getElementById('timKiem').value.toLowerCase();
-            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
-            var ketQuaTimKiem = danhSachHocVien.filter(function (hocVien) {
+            let tuKhoa = document.getElementById('timKiem').value.toLowerCase();
+            let danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            let ketQuaTimKiem = danhSachHocVien.filter(function (hocVien) {
                 return hocVien.hoTen.toLowerCase().includes(tuKhoa) || hocVien.email.toLowerCase().includes(tuKhoa);
             });
             hienThiDanhSachHocVien(danhSachHocVien);
             boiVangKetQuaTimKiem(ketQuaTimKiem);
         }
         function boiVangKetQuaTimKiem(ketQuaTimKiem) {
-            var tbody = document.querySelector('#danhSachHocVien tbody');
-            var rows = tbody.getElementsByTagName('tr');
-            for (var i = 0; i < rows.length; i++) {
+            let tbody = document.querySelector('#danhSachHocVien tbody');
+            let rows = tbody.getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
                 rows[i].classList.remove('vang');
             }
             ketQuaTimKiem.forEach(function (hocVien) {
-                var email = hocVien.email.toLowerCase();
-                var rowIndex = Array.from(rows).findIndex(function (row) {
+                let email = hocVien.email.toLowerCase();
+                let rowIndex = Array.from(rows).findIndex(function (row) {
                     return row.cells[2].textContent.toLowerCase() === email;
                 });
 
@@ -235,10 +235,10 @@
                 }
             });
         }
-        var inputTimKiem = document.getElementById('timKiem');
+        let inputTimKiem = document.getElementById('timKiem');
         inputTimKiem.addEventListener('input', xuLyInputTimKiem);
         function xuLyInputTimKiem() {
-            var tuKhoa = inputTimKiem.value.trim().toLowerCase();
+            let tuKhoa = inputTimKiem.value.trim().toLowerCase();
             if (tuKhoa === '') {
                 xoaTuKhoaTimKiem();
             } else {
@@ -251,10 +251,10 @@
         }
         xoaTuKhoaTimKiem();
         function sapXepTheoTen() {
-            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            let danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
             danhSachHocVien.sort(function (a, b) {
-                var tenA = a.hoTen.toLowerCase();
-                var tenB = b.hoTen.toLowerCase();
+                let tenA = a.hoTen.toLowerCase();
+                let tenB = b.hoTen.toLowerCase();
                 if (tenA < tenB) {
                     return -1;
                 }
@@ -268,14 +268,14 @@
         }
         hienThiDanhSachHocVien();
         function chinhSuaHocVien(index) {
-            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
-            var hocVienCanSua = danhSachHocVien[index];
+            let danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            let hocVienCanSua = danhSachHocVien[index];
             document.getElementById('hoTen').value = hocVienCanSua.hoTen;
             document.getElementById('email').value = hocVienCanSua.email;
             document.getElementById('soDienThoai').value = hocVienCanSua.soDienThoai;
             document.getElementById('queQuan').value = hocVienCanSua.queQuan;
-            var gioiTinhNu = document.getElementById('nu');
-            var gioiTinhNam = document.getElementById('nam');
+            let gioiTinhNu = document.getElementById('nu');
+            let gioiTinhNam = document.getElementById('nam');
             if (hocVienCanSua.gioiTinh === 'Nữ') {
                 gioiTinhNu.checked = true;
             } else if (hocVienCanSua.gioiTinh === 'Nam') {
