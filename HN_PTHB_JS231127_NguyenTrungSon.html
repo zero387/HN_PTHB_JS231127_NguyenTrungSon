@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý học viên</title>
+    <style>
+        .trangWed {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .khoiMot {
+            width: 350px;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid rgb(163, 158, 168);
+            display: inline-block;
+            position: relative;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+        tr.vang {
+            background-color: yellow;
+        }
+        h2 {
+            display: flex;
+            justify-content: center;
+        }
+        .chinhSua {
+            display: flex;
+            margin: 20px;
+            align-items: center;
+        }
+        .chinhSua input {
+            width: 200px;
+            height: 25px;
+            position: absolute;
+            margin-left: 110px;
+        }
+        .luuThongTin {
+            width: 170px;
+            height: 30px;
+            position: absolute;
+            left: 110px;
+            bottom: 20px;
+        }
+        .khoiHai {
+            height: auto;
+            border: 1px solid royalblue;
+            padding: 20px;
+            margin: 0 40px
+        }
+    </style>
+</head>
+<body>
+    <div class="trangWed">
+        <div class="khoiMot">
+            <h2>Thông tin học viên</h2>
+            <div class="chinhSua">
+                <label for="hoTen">Họ và Tên:</label>
+                <input type="text" id="hoTen" placeholder="Vui lòng nhập tên" required>
+            </div>
+            <div class="chinhSua"><label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Vui lòng nhập Gmail" required>
+            </div>
+            <div class="chinhSua">
+                <label for="soDienThoai">Số điện thoại:</label>
+                <input type="number" id="soDienThoai" placeholder="Vui lòng nhập số điện thoại" required>
+            </div>
+            <div class="chinhSua">
+                <label for="queQuan">Quê quán:</label>
+                <input type="text" id="queQuan" placeholder="Vui lòng nhập quê quán" required><br>
+            </div>
+
+            <div class="gioTinh1">
+                <label>Giới tính</label>
+                <input type="radio" id="nam" name="gioiTinh" value="Nam">
+                <label for="nam">Nam</label>
+                <input type="radio" id="nu" name="gioiTinh" value="Nữ">
+                <label for="nu">Nữ</label><br>
+            </div>
+            <button onclick="luuThongTin()" class="luuThongTin">Lưu lại</button>
+        </div>
+
+        <div class="khoiHai">
+            <h2>Danh sách học viên</h2>
+
+            <label for="timKiem">Tìm kiếm tên học viên:</label>
+            <input type="text" id="timKiem">
+            <button onclick="timKiem()">Tìm kiếm</button>
+
+            <table id="danhSachHocVien">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Họ và tên</th>
+                        <th>Email</th>
+                        <th>Điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Gender</th>
+                        <th>Hành động</th>
+                        <th><button onclick="sapXepTheoTen()">Sắp xếp (alpha b)</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        var hocsinhDangChinhSua = null;
+        function luuThongTin() {
+            var hoTen = document.getElementById('hoTen').value;
+            var email = document.getElementById('email').value;
+            var soDienThoai = document.getElementById('soDienThoai').value;
+            var queQuan = document.getElementById('queQuan').value;
+
+            if (hoTen === '' || email === '' || soDienThoai === '' || queQuan === '') {
+                alert('Vui lòng điền đầy đủ thông tin.');
+                return;
+            }
+            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            var tonTai = danhSachHocVien.some(function (hocVien) {
+                return hocVien.email === email;
+            });
+            if (tonTai && hocsinhDangChinhSua === null) {
+                alert('Email đã tồn tại. Vui lòng nhập một địa chỉ email khác.');
+                return;
+            }
+            kiemTraSoDienThoai()
+            if (hocsinhDangChinhSua !== null) {
+                danhSachHocVien[hocsinhDangChinhSua.index] = {
+                    hoTen: hoTen,
+                    email: email,
+                    soDienThoai: soDienThoai,
+                    queQuan: queQuan,
+                    gioiTinh: hocsinhDangChinhSua.hocVien.gioiTinh
+                };
+                document.querySelector('#danhSachHocVien tbody tr:nth-child(' + (hocsinhDangChinhSua.index + 1) + ') button:nth-child(1)').style.display = 'inline-block';
+                document.querySelector('#danhSachHocVien tbody tr:nth-child(' + (hocsinhDangChinhSua.index + 1) + ') button:nth-child(2)').style.display = 'none';
+            } else {
+                var gioiTinh = document.querySelector('input[name="gioiTinh"]:checked') ? document.querySelector('input[name="gioiTinh"]:checked').value : '';
+                var hocVien = {
+                    hoTen: hoTen,
+                    email: email,
+                    soDienThoai: soDienThoai,
+                    queQuan: queQuan,
+                    gioiTinh: gioiTinh
+                };
+                danhSachHocVien.push(hocVien);
+            }
+            localStorage.setItem('danhSachHocVien', JSON.stringify(danhSachHocVien));
+            hienThiDanhSachHocVien();
+            hocsinhDangChinhSua = null;
+            console.log(soDienThoai);
+        }
+        function kiemTraSoDienThoai() {
+            var inputSoDienThoai = document.getElementById('soDienThoai').value;
+            var regex = /^(0|\+84)([2-9]\d{8}|[1-9]\d{7})$/;
+            if (!regex.test(inputSoDienThoai)) {
+                alert('Bạn đã nhập sai số điện thoại');
+                return;
+            }
+        }
+        function hienThiDanhSachHocVien() {
+            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            var tbody = document.querySelector('#danhSachHocVien tbody');
+            tbody.innerHTML = '';
+
+            danhSachHocVien.forEach(function (hocVien, index) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${hocVien.hoTen}</td>
+                    <td>${hocVien.email}</td>
+                    <td>${hocVien.soDienThoai}</td>
+                    <td>${hocVien.queQuan}</td>
+                    <td>${hocVien.gioiTinh}</td>
+                    <td>
+                        <button onclick="xoaHocVien(${index})">Xóa</button>
+                        <button onclick="chinhSuaHocVien(${index})">Chỉnh sửa</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        function xoaHocVien(index) {
+            var xacNhan = confirm("Bạn có muốn xóa học sinh này không?");
+            if (xacNhan) {
+                var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+                danhSachHocVien.splice(index, 1);
+                localStorage.setItem('danhSachHocVien', JSON.stringify(danhSachHocVien));
+                hienThiDanhSachHocVien();
+            }
+        }
+        function timKiem() {
+            var tuKhoa = document.getElementById('timKiem').value.toLowerCase();
+            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            var ketQuaTimKiem = danhSachHocVien.filter(function (hocVien) {
+                return hocVien.hoTen.toLowerCase().includes(tuKhoa) || hocVien.email.toLowerCase().includes(tuKhoa);
+            });
+            hienThiDanhSachHocVien(danhSachHocVien);
+            boiVangKetQuaTimKiem(ketQuaTimKiem);
+        }
+        function boiVangKetQuaTimKiem(ketQuaTimKiem) {
+            var tbody = document.querySelector('#danhSachHocVien tbody');
+            var rows = tbody.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].classList.remove('vang');
+            }
+            ketQuaTimKiem.forEach(function (hocVien) {
+                var email = hocVien.email.toLowerCase();
+                var rowIndex = Array.from(rows).findIndex(function (row) {
+                    return row.cells[2].textContent.toLowerCase() === email;
+                });
+
+                if (rowIndex !== -1) {
+                    rows[rowIndex].classList.add('vang');
+                }
+            });
+        }
+        var inputTimKiem = document.getElementById('timKiem');
+        inputTimKiem.addEventListener('input', xuLyInputTimKiem);
+        function xuLyInputTimKiem() {
+            var tuKhoa = inputTimKiem.value.trim().toLowerCase();
+            if (tuKhoa === '') {
+                xoaTuKhoaTimKiem();
+            } else {
+                timKiem();
+            }
+        }
+        function xoaTuKhoaTimKiem() {
+            hienThiDanhSachHocVien();
+            boiVangKetQuaTimKiem([]);
+        }
+        xoaTuKhoaTimKiem();
+        function sapXepTheoTen() {
+            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            danhSachHocVien.sort(function (a, b) {
+                var tenA = a.hoTen.toLowerCase();
+                var tenB = b.hoTen.toLowerCase();
+                if (tenA < tenB) {
+                    return -1;
+                }
+                if (tenA > tenB) {
+                    return 1;
+                }
+                return 0;
+            });
+            localStorage.setItem('danhSachHocVien', JSON.stringify(danhSachHocVien));
+            hienThiDanhSachHocVien();
+        }
+        hienThiDanhSachHocVien();
+        function chinhSuaHocVien(index) {
+            var danhSachHocVien = JSON.parse(localStorage.getItem('danhSachHocVien')) || [];
+            var hocVienCanSua = danhSachHocVien[index];
+            document.getElementById('hoTen').value = hocVienCanSua.hoTen;
+            document.getElementById('email').value = hocVienCanSua.email;
+            document.getElementById('soDienThoai').value = hocVienCanSua.soDienThoai;
+            document.getElementById('queQuan').value = hocVienCanSua.queQuan;
+            var gioiTinhNu = document.getElementById('nu');
+            var gioiTinhNam = document.getElementById('nam');
+            if (hocVienCanSua.gioiTinh === 'Nữ') {
+                gioiTinhNu.checked = true;
+            } else if (hocVienCanSua.gioiTinh === 'Nam') {
+                gioiTinhNam.checked = true;
+            }
+            document.querySelector('#danhSachHocVien tbody tr:nth-child(' + (index + 1) + ') button:nth-child(1)').style.display = 'none';
+            document.querySelector('#danhSachHocVien tbody tr:nth-child(' + (index + 1) + ') button:nth-child(2)').style.display = 'inline-block';
+            hocsinhDangChinhSua = {
+                hocVien: hocVienCanSua,
+                index: index
+            };
+        }
+    </script>
+</body>
+
+</html>
